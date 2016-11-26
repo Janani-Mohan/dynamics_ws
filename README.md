@@ -2,9 +2,13 @@
 WPI RBE-500 Dynamics_Project_2016 : 
 
 Contributors
+
 1. Ankur Agrawal
+
 2. Janani Mohan
+
 3. Praneeta Mallela
+
 4. Sathya Narayanan
 
 Project Goal : Accurate BGA chip placement on a PCB using ABB IRB 120 Industrial robot
