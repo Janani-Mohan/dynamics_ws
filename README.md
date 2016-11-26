@@ -15,13 +15,21 @@ Currently the detection of BGA chips at zero degree orientation is picked up and
 Future Goal : To work on different sizes of BGAs and different orientations of BGAs.
 
 Dependent Packages to be installed:
+
 1. ros-indigo
+
 2. gazebo2 / also works in gazebo7
+
 3. ros-controllers
+
    sudo apt-get install ros-indigo-gazebo-ros-pkgs ros-indigo-gazebo-ros-control
+   
 4. eigen library
+
  Link : http://eigen.tuxfamily.org/index.php?title=Main_Page
+ 
 5. ros-gazebo-pkgs for vaccum gripper plugins 
+
  Link : https://github.com/ros-simulation/gazebo_ros_pkgs
  
  Usage:
