@@ -1,0 +1,8 @@
+prefix=/home/janani/dynamics_ws/devel
+
+Name: irb120_perception
+Description: Description of irb120_perception
+Version: 0.0.0
+Cflags: -I/home/janani/dynamics_ws/src/abb_irb120/irb120_perception/include
+Libs: -L/home/janani/dynamics_ws/devel/lib 
+Requires: 

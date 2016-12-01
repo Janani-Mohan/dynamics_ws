@@ -4,7 +4,6 @@
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 #include <geometry_msgs/Point.h>
-#include <std_msgs/Bool.h>
 
 class BGAPlacement
 {
@@ -16,7 +15,7 @@ public:
 	ros::Subscriber m_snapSub;
 	geometry_msgs::Point realWorldCoords;
 	void detectBGACallBack(const sensor_msgs::ImageConstPtr& img); 
-	void BGACB(const std_msgs::Bool msg); 
+	void BGACB(const geometry_msgs::Point pos); 
 	BGAPlacement(ros::NodeHandle n);
 	
 };

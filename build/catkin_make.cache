@@ -1,0 +1,2 @@
+abb_irb120/irb10_moveit:abb_irb120/irb120:abb_irb120/irb120_control:abb_irb120/irb120_description:abb_irb120/irb120_gazebo:abb_irb120/irb120_perception:abb_irb120/irb120_tf_calc:gazebo_ros_pkgs/gazebo_msgs:gazebo_ros_pkgs/gazebo_plugins:gazebo_ros_pkgs/gazebo_ros:gazebo_ros_pkgs/gazebo_ros_control:gazebo_ros_pkgs/gazebo_ros_pkgs
+-DCATKIN_DEVEL_PREFIX=/home/janani/dynamics_ws/devel -DCMAKE_INSTALL_PREFIX=/home/janani/dynamics_ws/install -G Unix Makefiles

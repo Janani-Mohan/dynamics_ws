@@ -5,27 +5,28 @@
 #include <math.h> 
 #include <string.h>
 #include <std_msgs/Float64.h>
-#include <std_msgs/Bool.h>
 #include <iostream>
 #define PI 3.14159265
-// #define dx 800
-// #define dy 800
 #define hor_fov 0.95// in radians(= 54.43 degrees)
 #define heightCam 492.0 //in mm
 
 using namespace std;
+geometry_msgs::Point tf;
 BGAPlacement::BGAPlacement(ros::NodeHandle n){
 	m_orientationPub =  n.advertise<std_msgs:: Float64> ("/detect/bga/orientation",100);
 	m_xy_pickup_Pub = n.advertise<geometry_msgs:: Point> ("/detect/bga_pickup/xy",100);
 	m_xy_place_Pub = n.advertise<geometry_msgs:: Point> ("/detect/bga_place/xy",100);
 	m_imageSub = n.subscribe("/irb120/camera1/image_raw", 5, &BGAPlacement::detectBGACallBack,this);
-	m_snapSub = n.subscribe("/capture/pos", 100, &BGAPlacement::BGACB,this);
+	m_snapSub = n.subscribe("irb120/transform", 2, &BGAPlacement::BGACB,this);
 }
 
-void BGAPlacement::BGACB(const std_msgs::Bool msg)
+void BGAPlacement::BGACB(const geometry_msgs::Point pos)
 {
 
-  //to be modified soon
+   tf.x = pos.x*1000;
+   tf.y = pos.y*1000; 
+   cout<<"tf x"<<tf.x<<""<<endl;
+   cout<<"tf y "<<tf.y<<""<<endl;  
 
 }
 void BGAPlacement::detectBGACallBack(const sensor_msgs::ImageConstPtr& img)
@@ -39,7 +40,6 @@ void BGAPlacement::detectBGACallBack(const sensor_msgs::ImageConstPtr& img)
 	bgaOriginal = inMsgPtr->image;
 	int px = bgaOriginal.cols, py = bgaOriginal.rows;
 	int horInPix=px;
-	// float diagInPix = ph;
 	float pixPerUnit = px*.5/(heightCam*tan(hor_fov*.5));// calculated = 120.627
 
 	cv::cvtColor(bgaOriginal, Bga_Chip_gray, CV_BGR2GRAY);
@@ -60,6 +60,7 @@ void BGAPlacement::detectBGACallBack(const sensor_msgs::ImageConstPtr& img)
 	cv::vector<cv::RotatedRect> minRect( contours.size() );
 	int itr = 0;
 	geometry_msgs::Point realWorldCoords;
+	geometry_msgs::Point rwc;
 	std_msgs::Float64 orientation;
 	realWorldCoords.x = 0;
 	realWorldCoords.y = 0;
@@ -87,23 +88,31 @@ void BGAPlacement::detectBGACallBack(const sensor_msgs::ImageConstPtr& img)
 				for( int j = 0; j < 4; j++ )
 					cv::line( drawing, rect_points[j], rect_points[(j+1)%4], cv::Scalar(255,255,255), 4, 8 );
 
-				realWorldCoords.x = ((points[itr].x-px*.5)/pixPerUnit);
-				realWorldCoords.y = ((py*.5-points[itr].y)/pixPerUnit);
-				realWorldCoords.z = heightCam;
+				rwc.x = ((points[itr].x-px*.5)/pixPerUnit);
+				rwc.y = ((py*.5-points[itr].y)/pixPerUnit);
+				rwc.z = heightCam;
 				cout<<"Contour centre pts "<<points[itr]<<endl;
-				cout<<"Real world coord "<<realWorldCoords<<endl;
+				cout<<"Real world coord "<<rwc<<endl;
 				cout<<"pix per unit "<<pixPerUnit<<endl;
 				cout<<"height is "<<heightCam*pixPerUnit<<endl;
 			}
 			if(flag == 10)
 			{
+			
+			   realWorldCoords.x = (tf.x) - (rwc.y);
+			   realWorldCoords.y = (tf.y) - (rwc.x);
+			   realWorldCoords.z = rwc.z;
+			   cout<<"Real world coords "<<realWorldCoords<<endl;
 			   m_xy_pickup_Pub.publish(realWorldCoords);
+
 			}	
 
-			if (flag == 60)
+			if (flag == 40)
 			{
-
-				m_xy_place_Pub.publish(realWorldCoords);
+			   realWorldCoords.x = rwc.y + tf.x;
+			   realWorldCoords.y = -rwc.x + tf.y;
+			   realWorldCoords.z = rwc.z ;
+               m_xy_place_Pub.publish(realWorldCoords);
 			}			
 			
 		}

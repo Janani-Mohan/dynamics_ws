@@ -1,0 +1,8 @@
+prefix=/home/janani/dynamics_ws/devel
+
+Name: irb120
+Description: Description of irb120
+Version: 0.0.0
+Cflags: -I/home/janani/dynamics_ws/src/abb_irb120/irb120/include
+Libs: -L/home/janani/dynamics_ws/devel/lib 
+Requires: 

@@ -1,0 +1,8 @@
+prefix=/home/janani/dynamics_ws/devel
+
+Name: irb120_tf_calc
+Description: Description of irb120_tf_calc
+Version: 0.0.0
+Cflags: -I/home/janani/dynamics_ws/src/abb_irb120/irb120_tf_calc/include
+Libs: -L/home/janani/dynamics_ws/devel/lib 
+Requires: roscpp geometry_msgs tf

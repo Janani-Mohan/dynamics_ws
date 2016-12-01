@@ -1,0 +1,8 @@
+prefix=/home/janani/dynamics_ws/install
+
+Name: irb120_gazebo
+Description: Description of irb120_gazebo
+Version: 0.1.0
+Cflags: 
+Libs: -L/home/janani/dynamics_ws/install/lib 
+Requires: 

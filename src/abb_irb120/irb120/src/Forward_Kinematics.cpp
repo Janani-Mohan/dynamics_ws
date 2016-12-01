@@ -391,10 +391,9 @@ void ForwardKinematics::PickupCallBack(const geometry_msgs::Point pos_msg)
   x(0,0) = pickup_x;
   x(1,0) = pickup_y;
   x(2,0) = pickup_z;
-  x_new = -pos_msg.y + x_offset;
-  y_new = -pos_msg.x + y_offset;
-  ROS_INFO("%f",pos_msg.x);
-  ROS_INFO("%f",pos_msg.y);
+  x_new = pos_msg.x;
+  y_new = pos_msg.y;
+
   ROS_INFO("%f",x_new);
   ROS_INFO("%f",y_new);
 
@@ -431,9 +430,6 @@ void ForwardKinematics::PickupCallBack(const geometry_msgs::Point pos_msg)
   y(2,0) = place_z;
 
   A = Trajectory(x,y,theta_deg);
-  std_msgs::Bool msg;
-  msg.data = 1;
-  capture_pub.publish(msg);
 
 }
 void ForwardKinematics::PlaceCallBack(const geometry_msgs::Point pos_msg)
@@ -442,7 +438,7 @@ void ForwardKinematics::PlaceCallBack(const geometry_msgs::Point pos_msg)
   MatrixXd y(3,1);
   MatrixXd x(3,1);
   MatrixXd A(1001,6);
-  double theta_deg = 0;
+  double theta_deg = orient_msg.data;
   double x_new = 0;
   double y_new = 0;
   double x_offset = 351;
@@ -451,15 +447,13 @@ void ForwardKinematics::PlaceCallBack(const geometry_msgs::Point pos_msg)
   x(0,0) = place_x;
   x(1,0) = place_y;
   x(2,0) = place_z;
-  std_msgs::Bool msg;
-  msg.data = 0;
-  x_new = pos_msg.y + x_offset;
-  y_new = -pos_msg.x + y_offset;
-  //capture_pub.publish(msg);
+  x_new = pos_msg.x;
+  y_new = pos_msg.y;
+ 
   ROS_INFO("%f",pos_msg.x);
   ROS_INFO("%f",pos_msg.y);
-  ROS_INFO("%f",x_new);
-  ROS_INFO("%f",y_new);
+  ROS_INFO("x%f",x_new);
+  ROS_INFO("y%f",y_new);
 
   y(0,0) = x_new;
   y(1,0) = y_new;
@@ -483,6 +477,11 @@ void ForwardKinematics::PlaceCallBack(const geometry_msgs::Point pos_msg)
 
 }
 
+void ForwardKinematics::OrientCallBack(const std_msgs::Float64 msg)
+{
+  orient_msg.data = msg.data;
+}
+
 int main(int argc, char**argv)
 {
   ros::init(argc, argv, "Forward_Kinematics");
@@ -492,7 +491,7 @@ int main(int argc, char**argv)
   VectorXd d(6);
   VectorXd a(6);
   VectorXd alpha(6);
-  int flag = 0;
+
   d(0) = 290; d(1)=0; d(2) = 0; d(3) = 302; d(4) = 0; d(5)= 72;
   a(0) = 0; a(1) = 270; a(2) = 70; a(3) = 0; a(4) = 0; a(5) = 0;
   alpha(0) = 90 * (M_PI/180.0); alpha(1) = 0* (M_PI/180.0); alpha(2) = 90* (M_PI/180.0);
@@ -549,15 +548,7 @@ int main(int argc, char**argv)
   {
    obj.moveRobot(home);
    loop_rate.sleep();
-   flag = 1;
   }
   
-  if (flag)
-  {
-    std_msgs::Bool msg;
-    msg.data = 1;
-    obj.capture_pub.publish(msg);
-  }
-
   ros::spin();
 }
