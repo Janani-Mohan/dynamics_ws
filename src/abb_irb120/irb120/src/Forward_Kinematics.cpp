@@ -374,6 +374,7 @@ MatrixXd ForwardKinematics::Polynome(MatrixXd q, MatrixXd t, double v_i, double 
   return X;
 }
 
+
 void ForwardKinematics::PickupCallBack(const geometry_msgs::Point pos_msg)
 {
 
@@ -383,8 +384,6 @@ void ForwardKinematics::PickupCallBack(const geometry_msgs::Point pos_msg)
   double theta_deg = 0;
   double x_new = 0;
   double y_new = 0;
-  double x_offset = 351;
-  double y_offset = -266;
   std_srvs::Empty srv;
   client1.call(srv);
 
@@ -438,12 +437,10 @@ void ForwardKinematics::PlaceCallBack(const geometry_msgs::Point pos_msg)
   MatrixXd y(3,1);
   MatrixXd x(3,1);
   MatrixXd A(1001,6);
-  double theta_deg = orient_msg.data;
+  double theta_deg = 0;
   double x_new = 0;
   double y_new = 0;
-  double x_offset = 351;
-  double y_offset = 135;
-  
+
   x(0,0) = place_x;
   x(1,0) = place_y;
   x(2,0) = place_z;
@@ -468,7 +465,7 @@ void ForwardKinematics::PlaceCallBack(const geometry_msgs::Point pos_msg)
 
   y(0,0) = x_new;
   y(1,0) = y_new;
-  y(2,0) = 10;
+  y(2,0) = 5;
 
   A = Trajectory(x,y,theta_deg);
 
@@ -480,6 +477,7 @@ void ForwardKinematics::PlaceCallBack(const geometry_msgs::Point pos_msg)
 void ForwardKinematics::OrientCallBack(const std_msgs::Float64 msg)
 {
   orient_msg.data = msg.data;
+
 }
 
 int main(int argc, char**argv)

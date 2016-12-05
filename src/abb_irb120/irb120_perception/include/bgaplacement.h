@@ -15,7 +15,6 @@ public:
 	ros::Subscriber m_snapSub;
 	geometry_msgs::Point realWorldCoords;
 	void detectBGACallBack(const sensor_msgs::ImageConstPtr& img); 
-	void BGACB(const geometry_msgs::Point pos); 
 	BGAPlacement(ros::NodeHandle n);
 	
 };

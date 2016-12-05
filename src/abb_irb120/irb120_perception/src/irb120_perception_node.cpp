@@ -11,24 +11,14 @@
 #define heightCam 492.0 //in mm
 
 using namespace std;
-geometry_msgs::Point tf;
+
 BGAPlacement::BGAPlacement(ros::NodeHandle n){
 	m_orientationPub =  n.advertise<std_msgs:: Float64> ("/detect/bga/orientation",100);
-	m_xy_pickup_Pub = n.advertise<geometry_msgs:: Point> ("/detect/bga_pickup/xy",100);
-	m_xy_place_Pub = n.advertise<geometry_msgs:: Point> ("/detect/bga_place/xy",100);
-	m_imageSub = n.subscribe("/irb120/camera1/image_raw", 5, &BGAPlacement::detectBGACallBack,this);
-	m_snapSub = n.subscribe("irb120/transform", 2, &BGAPlacement::BGACB,this);
+	m_xy_pickup_Pub = n.advertise<geometry_msgs:: Point> ("/detect/bga_pickup/xy",10);
+	m_xy_place_Pub = n.advertise<geometry_msgs:: Point> ("/detect/bga_place/xy",10);
+	m_imageSub = n.subscribe("/irb120/camera1/image_raw", 10, &BGAPlacement::detectBGACallBack,this);
 }
 
-void BGAPlacement::BGACB(const geometry_msgs::Point pos)
-{
-
-   tf.x = pos.x*1000;
-   tf.y = pos.y*1000; 
-   cout<<"tf x"<<tf.x<<""<<endl;
-   cout<<"tf y "<<tf.y<<""<<endl;  
-
-}
 void BGAPlacement::detectBGACallBack(const sensor_msgs::ImageConstPtr& img)
 {
 	static int flag = 0;
@@ -62,8 +52,8 @@ void BGAPlacement::detectBGACallBack(const sensor_msgs::ImageConstPtr& img)
 	geometry_msgs::Point realWorldCoords;
 	geometry_msgs::Point rwc;
 	std_msgs::Float64 orientation;
-	realWorldCoords.x = 0;
-	realWorldCoords.y = 0;
+	rwc.x = 0;
+	rwc.y = 0;
 	for(unsigned int i = 0; i< contours.size(); i++)
 	{
 		double area =cv::contourArea(contours[i], true);
@@ -99,20 +89,15 @@ void BGAPlacement::detectBGACallBack(const sensor_msgs::ImageConstPtr& img)
 			if(flag == 10)
 			{
 			
-			   realWorldCoords.x = (tf.x) - (rwc.y);
-			   realWorldCoords.y = (tf.y) - (rwc.x);
-			   realWorldCoords.z = rwc.z;
-			   cout<<"Real world coords "<<realWorldCoords<<endl;
-			   m_xy_pickup_Pub.publish(realWorldCoords);
+			   cout<<"Real world coords "<<rwc<<endl;
+			   m_xy_pickup_Pub.publish(rwc);
 
 			}	
 
-			if (flag == 40)
+			if (flag == 60)
 			{
-			   realWorldCoords.x = rwc.y + tf.x;
-			   realWorldCoords.y = -rwc.x + tf.y;
-			   realWorldCoords.z = rwc.z ;
-               m_xy_place_Pub.publish(realWorldCoords);
+				cout<<"Real world coords "<<rwc<<endl;
+	            m_xy_place_Pub.publish(rwc);
 			}			
 			
 		}

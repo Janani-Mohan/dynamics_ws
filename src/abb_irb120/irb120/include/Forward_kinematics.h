@@ -16,6 +16,7 @@ private:
   VectorXd a;
   VectorXd alpha;
   std_msgs:: Float64 orient_msg;
+  geometry_msgs::Point tf;
   ros::Publisher pos_pub1;
   ros::Publisher pos_pub2;
   ros::Publisher pos_pub3;
@@ -43,12 +44,12 @@ public:
     pos_pub4 = n.advertise<std_msgs::Float64>("/irb120/joint_4_position_controller/command",1000);
     pos_pub5 = n.advertise<std_msgs::Float64>("/irb120/joint_5_position_controller/command",1000);
     pos_pub6 = n.advertise<std_msgs::Float64>("/irb120/joint_6_position_controller/command",1000);
-    pos1_sub  = n.subscribe("/detect/bga_pickup/xy", 100, &ForwardKinematics::PickupCallBack,this);
-    pos2_sub  = n.subscribe("/detect/bga_place/xy", 100, &ForwardKinematics::PlaceCallBack,this);
+    pos1_sub  = n.subscribe("/irb120/transform/pickup", 10, &ForwardKinematics::PickupCallBack,this);
+    pos2_sub  = n.subscribe("/irb120/transform/place", 10, &ForwardKinematics::PlaceCallBack,this);
     orientation_sub  = n.subscribe("/detect/bga/orientation", 10, &ForwardKinematics::OrientCallBack,this);
     client1 = n.serviceClient<std_srvs::Empty>("/irb120/on");
     client2 = n.serviceClient<std_srvs::Empty>("/irb120/off");
-
+  
   }
   MatrixXd MatrixTransformation(double theta, double d, double a, double alpha);
   MatrixXd getR03(VectorXd theta_);
@@ -62,5 +63,5 @@ public:
   void PickupCallBack(const geometry_msgs::Point pos_msg);
   void PlaceCallBack(const geometry_msgs::Point pos_msg);
   void OrientCallBack(const std_msgs::Float64 msg);
-
+ 
 };
